@@ -50,7 +50,6 @@ END_MESSAGE_MAP()
 
 void CServerLogDlg::OnBnClickedButtonServerOn()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	m_pMainDlg->ServerOn();
 	GetDlgItem(IDC_BUTTON_SERVERON)->EnableWindow(FALSE);
 	GetDlgItem(IDC_BUTTON_SERVEROFF)->EnableWindow(TRUE);
@@ -66,15 +65,12 @@ void CServerLogDlg::AddServerLog(LPCTSTR m_strLog)
 	m_editLog.LineScroll(m_editLog.GetLineCount());		// 当服务器有新消息时，光标自动移动到最后一行
 }
 
-
 void CServerLogDlg::OnBnClickedButtonServerOff()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	m_pMainDlg->ServerOff();
 	GetDlgItem(IDC_BUTTON_SERVERON)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_SERVEROFF)->EnableWindow(FALSE);
 }
-
 
 BOOL CServerLogDlg::OnInitDialog()
 {
@@ -86,9 +82,7 @@ BOOL CServerLogDlg::OnInitDialog()
 				  // 异常: OCX 属性页应返回 FALSE
 }
 
-
 void CServerLogDlg::OnBnClickedButtonSavelog()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	m_pMainDlg->SaveLog();
 }

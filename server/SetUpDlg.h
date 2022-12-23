@@ -29,4 +29,5 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedButtonApply();
 	CEdit m_editCost;
+	DOUBLE m_valCost;
 };

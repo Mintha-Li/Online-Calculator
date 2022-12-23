@@ -43,8 +43,11 @@ BOOL CSetUpDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	m_IPAddress = "127.0.0.1";
 	m_Port = 8080;
-	// TODO:  在此添加额外的初始化
+	m_valCost = 1;
+	CString m_strCost;
+	m_strCost.Format(L"%.2f", m_valCost);
 	m_IPAddressCtrl.SetWindowTextW(m_IPAddress);
+	m_editCost.SetWindowTextW(m_strCost);
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -57,4 +60,7 @@ void CSetUpDlg::OnBnClickedButtonApply()
 	m_IPAddressCtrl.GetWindowText(m_IPAddress);
 	m_pMainDlg->m_IPAddress = m_IPAddress;
 	m_pMainDlg->m_Port = m_Port;
+	CString m_strCost;
+	m_editCost.GetWindowTextW(m_strCost);
+	m_valCost = _ttof(m_strCost);
 }

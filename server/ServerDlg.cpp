@@ -120,14 +120,6 @@ BOOL CServerDlg::OnInitDialog()
 	InitUserData(); //初始化用户数据
 	InitTabMain();	//初始化Tab界面
 
-	//测试用
-	//m_file->ReadUserData();
-	//m_ServerLogDlg->AddServerLog(m_file->userlist.back().userName);
-	//m_file->AddUser((CString)"龙哥", (CString)"123", 123);
-	//m_file->WriteUserData();
-	//m_file->ReadUserData();
-	//m_ServerLogDlg->AddServerLog(m_file->userlist.back().userName);
-	//m_file->WriteUserData();
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -234,11 +226,13 @@ BOOL CServerDlg::ServerOn()
 {
 	m_IPAddress = m_SetUpDlg->m_IPAddress;		//从设置面板获取IP与端口号
 	m_Port = m_SetUpDlg->m_Port;
+	m_valCost = m_SetUpDlg->m_valCost;			//从设置面板获取单次计算金额
 	InitSocketListen();
 	CString strLog;
 	strLog.Format(L"服务器启动，运行IP地址:%s:%d",m_IPAddress,m_Port);
 	m_ServerLogDlg->AddServerLog(strLog);
 	m_SetUpDlg->m_editCost.EnableWindow(FALSE);
+	ServerStatus = TRUE;
 	return 0;
 }
 
@@ -250,6 +244,7 @@ BOOL CServerDlg::ServerOff()
 	strLog.Format(L"服务器已关闭");
 	m_ServerLogDlg->AddServerLog(strLog);
 	m_SetUpDlg->m_editCost.EnableWindow(TRUE);
+	ServerStatus = FALSE;
 	return 0;
 }
 
@@ -266,11 +261,11 @@ void CServerDlg::InitTabMain()
 	m_TabMain.InsertItem(1, _T("用户管理"));
 	m_TabMain.InsertItem(2, _T("服务器设置"));
 	m_ServerLogDlg = new CServerLogDlg(this);
-	m_UserMGMTDlg = new CUserManagerDlg(this);
+	m_UserManagerDlg = new CUserManagerDlg(this);
 	m_SetUpDlg = new CSetUpDlg(this);
 
 	m_ServerLogDlg->Create(IDD_SERVERLOG, &m_TabMain);
-	m_UserMGMTDlg->Create(IDD_USER_MANAGER, &m_TabMain);
+	m_UserManagerDlg->Create(IDD_USER_MANAGER, &m_TabMain);
 	m_SetUpDlg->Create(IDD_SETUP, &m_TabMain);
 
 
@@ -281,11 +276,11 @@ void CServerDlg::InitTabMain()
 	rc.left += 0;
 	rc.right -= 0;
 	m_ServerLogDlg->MoveWindow(&rc);
-	m_UserMGMTDlg->MoveWindow(&rc);
+	m_UserManagerDlg->MoveWindow(&rc);
 	m_SetUpDlg->MoveWindow(&rc);
 
 	pDialog[0] = m_ServerLogDlg;
-	pDialog[1] = m_UserMGMTDlg;
+	pDialog[1] = m_UserManagerDlg;
 	pDialog[2] = m_SetUpDlg;
 
 	pDialog[0]->ShowWindow(SW_SHOW);
@@ -327,6 +322,3 @@ void CServerDlg::InitUserData()
 	}
 	m_UserData->ReadUserData();
 }
-
-
-

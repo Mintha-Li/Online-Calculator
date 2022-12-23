@@ -12,6 +12,7 @@
 #include "LoginDlg.h"
 #include "ChargeDlg.h"
 #include "RegisterDlg.h"
+#include "UserData.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -101,6 +102,9 @@ BEGIN_MESSAGE_MAP(CClientDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CHARGE, &CClientDlg::OnBnClickedButtonCharge)
 	ON_COMMAND(ID_CHARGE, &CClientDlg::OnCharge)
 	ON_BN_CLICKED(IDC_BUTTON_EQUAL, &CClientDlg::OnBnClickedButtonEqual)
+	ON_COMMAND(ID_USERDATA, &CClientDlg::OnUserdata)
+	ON_WM_CLOSE()
+	ON_COMMAND(ID_LOGOUT, &CClientDlg::OnLogOut)
 END_MESSAGE_MAP()
 
 
@@ -483,11 +487,14 @@ void CClientDlg::OnCharge()
 void CClientDlg::OnChargeSuccess(DOUBLE chargeVal)
 {
 	m_value.Format(L"%.2f", (_ttof(m_value) + chargeVal));
-	AfxMessageBox(L"充值成功！");
+	AfxMessageBox(L"充值成功！",MB_ICONINFORMATION);
 	ChargeDlg->RefreshUserVal();
 	m_editValue.SetWindowTextW(m_value);
 }
 
+void CClientDlg::OnChargeFail()
+{
+}
 
 void CClientDlg::MsgSend(CString username, CString userPassword, CString textSend, UINT nRequest, UINT nStatus)
 {
@@ -503,10 +510,8 @@ void CClientDlg::ChargeVal(DOUBLE chargeVal)
 	MsgSend(m_account, m_password, strChargeVal, REQUEST_CHARGE);
 }
 
-
 void CClientDlg::OnBnClickedButtonEqual()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	MsgSend(m_account, m_password, m_strDisplay, REQUEST_CALCULATE);
 }
 
@@ -518,3 +523,61 @@ void CClientDlg::OnCalculateSuccess(CString result)
 	strMsg.Format(L"计算成功，结果:%s", result);
 	MessageBox(strMsg, L"提示", MB_ICONINFORMATION);
 }
+
+void CClientDlg::OnCalculateFail()
+{
+	MessageBox(L"余额不足！", L"提示", MB_ICONINFORMATION);
+}
+
+
+void CClientDlg::OnUserdata()
+{
+	// TODO: 在此添加命令处理程序代码
+	UserDataDlg = new CUserData(this);
+	UserDataDlg->DoModal();
+}
+
+void CClientDlg::OnUserValueChange(DOUBLE value)
+{
+	CString strValue;
+	strValue.Format(L"%.2f", value);
+	m_value = strValue;
+	m_editValue.SetWindowTextW(CString(m_value));
+}
+
+void CClientDlg::OnUserDataChange(CString password)
+{
+	MsgSend(m_account, m_password, password, REQUEST_USERDATA);
+	OnLogOut();
+}
+
+void CClientDlg::OnLogOut()
+{
+	MsgSend(m_account, m_password, L"", REQUSET_QUIT);
+	ReStart();
+}
+
+void CClientDlg::ReStart()
+{
+	wchar_t strPath[100];
+	GetModuleFileName(NULL, strPath, 100);
+	//创建守护进程，在启用新进程成功后发送WM_QUIT消息结束原来的进程；
+	STARTUPINFO startInfo;
+	PROCESS_INFORMATION processInfo;
+	ZeroMemory(&startInfo, sizeof(STARTUPINFO));
+	startInfo.cb = sizeof(STARTUPINFO);
+	if (CreateProcess(NULL, (LPTSTR)(LPCTSTR)strPath, NULL, NULL, FALSE, 0, NULL, NULL, &startInfo, &processInfo))
+	{
+		CloseHandle(processInfo.hProcess);
+		CloseHandle(processInfo.hThread);
+		PostQuitMessage(WM_CLOSE);
+	}
+}
+
+void CClientDlg::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	MsgSend(m_account, m_password, L"", REQUSET_QUIT);
+	CDialogEx::OnClose();
+}
+

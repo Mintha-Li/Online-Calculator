@@ -10,7 +10,7 @@
 #define IDR_MAINFRAME                   128
 #define IDD_SETUP                       129
 #define IDD_USER_MANAGEMENT             131
-#define IDD_USER_MANAGER             131
+#define IDD_USER_MANAGER                131
 #define IDD_SERVERLOG                   133
 #define IDC_TAB_MAIN                    1001
 #define IDC_EDIT_LOG                    1002
@@ -19,7 +19,9 @@
 #define IDC_BUTTON_SERVEROFF            1004
 #define IDC_LIST_DATA                   1005
 #define IDC_EDIT1                       1006
+#define IDC_EDIT_USERNAME               1006
 #define IDC_BUTTON1                     1007
+#define IDC_BUTTON_FIND                 1007
 #define IDC_BUTTON_ADDUSER              1008
 #define IDC_BUTTON_SAVE                 1009
 #define IDC_BUTTON_DEL_USER             1010

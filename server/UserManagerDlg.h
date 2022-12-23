@@ -21,7 +21,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-
 	virtual BOOL OnInitDialog();
 	CListCtrl m_UserDataList;
 private:
@@ -35,4 +34,6 @@ public:
 	CEdit m_editPassword;
 	CEdit m_editValue;
 	afx_msg void OnBnClickedButtonSave();
+	CEdit m_editUsername;
+	afx_msg void OnBnClickedButtonFind();
 };

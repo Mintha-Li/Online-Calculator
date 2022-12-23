@@ -22,10 +22,11 @@ class CInfoFile
 public:
 	CInfoFile();
 	~CInfoFile();
-
+public:
 	void ReadUserData();
 	void WriteUserData();
 	BOOL IsFileExisted();
+public:
 	BOOL IsUserExisted(CString username);
 	BOOL IsUserCorrect(CString username, CString password);
 	void CreateUserData();
@@ -35,13 +36,9 @@ public:
 	DOUBLE GetUserValue(CString username);
 	BOOL ChangeUserValue(CString username,DOUBLE newValue);
 	BOOL ChangePassword(CString username, CString newPassword);
-	
-	//设置保存(暂未制作)
-	//void AddConfig(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpString);
-	//void GetConfig(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpString);
-
+public:
 	void WriteLog(CString log);
-
+public:
 	list<User> userlist;
 	int num;
 };

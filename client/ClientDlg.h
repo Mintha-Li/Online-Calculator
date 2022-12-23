@@ -7,6 +7,7 @@ class CSocketClient;
 class CSetUpDlg;
 class CLoginDlg;
 class CChargeDlg;
+class CUserData;
 // CClientDlg 对话框
 class CClientDlg : public CDialogEx
 {
@@ -36,7 +37,6 @@ protected:
 public:
 	// 数据的显示
 	afx_msg void OnStnClickedDisplay();
-
 	// 按键
 	afx_msg void OnBnClickedButtonAC();
 	afx_msg void OnBnClickedButton0();
@@ -58,43 +58,39 @@ public:
 	afx_msg void OnBnClickedButtonMcl();
 	afx_msg void OnBnClickedButtonDiv();
 	afx_msg void OnBnClickedButtonEqual();
-
 	// 其他功能按键
 	afx_msg void OnBnClickedButtonCharge();
-
+public:
 	// 自定义消息响应
 	afx_msg LRESULT OnLogin(WPARAM, LPARAM);
 	afx_msg LRESULT OnRegister(WPARAM, LPARAM);
-
+public:
 	// 初始化函数
 	afx_msg void InitSocketClient();
 	afx_msg void ShowLoginDlg();
-
+public:
 	// 算式显示部分
 	// 显示编辑框
 	CEdit m_editDisplay;
 	// 显示文本
 	CString m_strDisplay;
-
+public:
 	// 用户信息
 	CString m_account;
 	CString m_password;
 	CString m_value;
 	DOUBLE m_chargeValue;
-
+public:
 	// Socket
 	CSocketClient *m_ptrSocketClient;
 	CString m_IPAddress;
 	UINT m_Port;
-
+public:
 	CSetUpDlg *SetUpDlg;
 	CLoginDlg *LoginDlg;
 	CChargeDlg *ChargeDlg;
-
-
+public:
 	afx_msg void OnSetUp();
-
-	// 菜单按键
 	afx_msg void OnAbout();
 
 	// 格式化发送数据生成函数
@@ -106,7 +102,8 @@ public:
 
 	CEdit m_editValue;
 	CEdit m_editAccount;
-	void MsgSend(CString username, CString userPassword, CString textSend = L"0", UINT nRequest = REQUEST_NONE, UINT nStatus = STATUS_NONE);
+	void MsgSend(CString username, CString userPassword, CString textSend = L"0", 
+		UINT nRequest = REQUEST_NONE, UINT nStatus = STATUS_NONE);
 	void ChargeVal(DOUBLE chargeVal);
 
 	void OnLoginSuccess();
@@ -114,7 +111,16 @@ public:
 	void OnRegisterSuccess();
 	void OnRegisterFail();
 	void OnChargeSuccess(DOUBLE chargeVal);
-	//void OnChargeFail();
+	void OnChargeFail();
 	void OnCalculateSuccess(CString result);
-	//void OnCalculateFail();
+	void OnCalculateFail();
+public:
+	CUserData *UserDataDlg;
+	afx_msg void OnUserdata();
+	void OnUserValueChange(DOUBLE value);
+	void OnUserDataChange(CString password);
+	afx_msg void OnLogOut();
+	void ReStart();
+	afx_msg void OnClose();
+
 };

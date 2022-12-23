@@ -21,6 +21,7 @@ CSocketServer::CSocketServer(CServerDlg * pDlg)
 	pMainDlg = pDlg;
 	pLogDlg = pMainDlg->m_ServerLogDlg;
 	pUserData = pMainDlg->m_UserData;
+	valCost = pMainDlg->m_valCost;
 }
 
 CSocketServer::~CSocketServer()
@@ -32,7 +33,6 @@ CSocketServer::~CSocketServer()
 
 void CSocketServer::OnReceive(int nErrorCode)
 {
-	// TODO: 在此添加专用代码和/或调用基类
 	CString strMsg;
 	char szMsg[MAX_BUF] = { 0 };
 	int iRead = Receive(szMsg, MAX_BUF, 0);
@@ -88,7 +88,8 @@ void CSocketServer::MsgProc(CString strMsg)
 	case REQUEST_REGISTER: {
 		if (pUserData->IsUserExisted(m_UserName) == FALSE) {
 			pMainDlg->m_UserData->AddUser(m_UserName, m_CheckNum, 0);
-			pMainDlg->m_UserMGMTDlg->UpdateListData();
+			pMainDlg->m_UserManagerDlg->UpdateListData();
+			pUserData->WriteUserData();
 			MsgSend(m_UserName, m_CheckNum, L"0", REQUEST_REGISTER, STATUS_TRUE);
 		}
 		else {
@@ -98,15 +99,31 @@ void CSocketServer::MsgProc(CString strMsg)
 	};
 	case REQUEST_CALCULATE: {
 		CString textbuf = m_Text;
-		vector<CString> m_InputNum;
-		Operation(textbuf, m_InputNum);
-		DOUBLE m_Result = Calculation(m_InputNum);
-		CString strResult;
-		strResult.Format(L"%.2f", m_Result);
-		CString strLog;
-		strLog.Format(L"用户:%s,计算算式:%s", m_UserName, m_Text);
-		pLogDlg->AddServerLog(strLog);
-		MsgSend(m_UserName, m_CheckNum, strResult, REQUEST_CALCULATE, STATUS_TRUE);
+		if (pUserData->GetUserValue(m_UserName) - valCost < 0)
+		{
+			MsgSend(m_UserName, m_CheckNum, L"0", REQUEST_CALCULATE, STATUS_FALSE);
+		}
+		else
+		{
+			vector<CString> m_InputNum;
+			Operation(textbuf, m_InputNum);
+			DOUBLE m_Result = Calculation(m_InputNum);
+			CString strResult;
+			strResult.Format(L"%.2f", m_Result);
+			CString strLog;
+			strLog.Format(L"用户:%s,计算算式:%s", m_UserName, m_Text);
+			pLogDlg->AddServerLog(strLog);
+			MsgSend(m_UserName, m_CheckNum, strResult, REQUEST_CALCULATE, STATUS_TRUE);
+			DOUBLE userVal;
+			userVal = pUserData->GetUserValue(m_UserName);
+			userVal -= valCost;
+			pUserData->ChangeUserValue(m_UserName, userVal);
+			pMainDlg->m_UserManagerDlg->UpdateListData();
+			pUserData->WriteUserData();
+			CString strUserVal;
+			strUserVal.Format(L"%.2f", userVal);
+			MsgSend(m_UserName, m_CheckNum, strUserVal, REQUEST_VALUE);
+		}
 		break;
 	}
 	case REQUEST_CHARGE: {
@@ -117,7 +134,8 @@ void CSocketServer::MsgProc(CString strMsg)
 			userVal = pUserData->GetUserValue(m_UserName);
 			userVal += valCharge;
 			pUserData->ChangeUserValue(m_UserName, userVal);
-			pMainDlg->m_UserMGMTDlg->UpdateListData();
+			pUserData->WriteUserData();
+			pMainDlg->m_UserManagerDlg->UpdateListData();
 			CString strChargeVal;
 			strChargeVal.Format(L"%.2f", valCharge);
 			MsgSend(m_UserName, m_CheckNum, strChargeVal, REQUEST_CHARGE, STATUS_TRUE);
@@ -128,6 +146,23 @@ void CSocketServer::MsgProc(CString strMsg)
 		}
 		break;
 	}
+	case REQUSET_QUIT:
+	{
+		m_Log.Format(L"用户%s退出",m_UserName);
+		pLogDlg->AddServerLog(m_Log);
+		~CSocketServer();
+		break;
+	}
+	case REQUEST_USERDATA:
+	{
+		m_Log.Format(L"用户%s修改密码", m_UserName);
+		pUserData->ChangePassword(m_UserName, m_Text);
+		pUserData->WriteUserData();
+		pMainDlg->m_UserManagerDlg->UpdateListData();
+		pLogDlg->AddServerLog(m_Log);
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -156,7 +191,8 @@ BOOL CSocketServer::MsgGenerator(char szBuf[], CString userName, CString userPas
 	{
 		strPasswordLen.Format(L"%d", PasswordLen);
 	}
-	strMsg.Format(L"%d%d%s%s%s%s%s", nRequest, nStatus, strUserNameLen, strPasswordLen, userName, userPassword, textSend);
+	strMsg.Format(L"%d%d%s%s%s%s%s", nRequest, nStatus, strUserNameLen, 
+		strPasswordLen, userName, userPassword, textSend);
 	strcpy_s(szBuf, MAX_BUF, T2A(strMsg));
 	return TRUE;
 }
@@ -171,6 +207,11 @@ void CSocketServer::MsgSend(CString username, CString userPassword, CString text
 	CString strRequest;
 	CString strStatus;
 	CString strNotes;
+	if (nRequest == REQUEST_VALUE)
+	{
+		m_Log.Format(L"用户%s,当前余额：%s", username,textSend);
+		return;
+	}
 	switch (nRequest)
 	{
 	case REQUEST_NONE:
@@ -196,7 +237,6 @@ void CSocketServer::MsgSend(CString username, CString userPassword, CString text
 	default:
 		break;
 	}
-
 	switch (nStatus)
 	{
 	case STATUS_TRUE:
@@ -209,7 +249,7 @@ void CSocketServer::MsgSend(CString username, CString userPassword, CString text
 	}
 	case STATUS_NONE:
 	{
-		strRequest = L"未定义"; break;
+		strRequest = L""; break;
 	}
 	default:
 		break;
@@ -221,6 +261,11 @@ void CSocketServer::MsgSend(CString username, CString userPassword, CString text
 	}
 	else if (nRequest == REQUEST_CALCULATE && nStatus == STATUS_TRUE) {
 		strNotes.Format(L";结果:%.2f", _ttof(textSend));
+		m_Log.Append(strNotes);
+	}
+	else if (nRequest == REQUEST_VALUE)
+	{
+		strNotes.Format(L";当前余额:%.2f", _ttof(textSend));
 		m_Log.Append(strNotes);
 	}
 	pLogDlg->AddServerLog(m_Log);

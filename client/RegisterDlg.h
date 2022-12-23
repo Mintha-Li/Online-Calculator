@@ -29,4 +29,5 @@ public:
 	CEdit m_editPassword;
 	CEdit m_editPwCheck;
 	virtual void OnOK();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

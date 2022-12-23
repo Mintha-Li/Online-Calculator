@@ -13,6 +13,7 @@
 #include <afxcontrolbars.h>
 #include <afxcontrolbars.h>
 #include <afxcontrolbars.h>
+#include <afxcontrolbars.h>
 
 // 自定义参数
 #define INFTY 32767
@@ -21,6 +22,7 @@
 #define WM_LOGIN			WM_USER+100
 #define WM_REGISTER			WM_USER+110
 
+//buffer长度定义
 #define MAX_BUF 256
 
 // REQUEST服务请求
@@ -30,6 +32,8 @@
 #define REQUEST_USERDATA 1030
 #define REQUEST_CALCULATE 1040
 #define REQUEST_CHARGE 1050
+#define REQUEST_VALUE 1060
+#define REQUSET_QUIT 1090
 
 // STATUS状态值
 #define STATUS_NONE 1000

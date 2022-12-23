@@ -15,7 +15,7 @@ IMPLEMENT_DYNAMIC(CLoginDlg, CDialogEx)
 CLoginDlg::CLoginDlg(CClientDlg *pDlg,CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_LOGIN, pParent)
 {
-	pMainDlg = pDlg;
+	pMainDlg = pDlg;		//将主窗口句柄传入
 }
 
 CLoginDlg::~CLoginDlg()
@@ -46,7 +46,6 @@ BOOL CLoginDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	this->ModifyStyleEx(0, WS_EX_APPWINDOW);
 
-	// TODO:  在此添加额外的初始化
 	staticTitleFont.CreatePointFont(150, _T("楷体"));
 	m_staticTitle.SetFont(&staticTitleFont);
 
@@ -57,7 +56,6 @@ BOOL CLoginDlg::OnInitDialog()
 
 void CLoginDlg::OnClose()
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	// 若关闭登录窗口，程序应退出
 	if (MessageBox(L"确认退出？", L"提示", MB_YESNO | MB_ICONINFORMATION) == IDYES)
 	{
@@ -70,22 +68,21 @@ void CLoginDlg::OnClose()
 
 void CLoginDlg::OnBnClickedButtonLogin()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	UpdateData();
 	CString m_acct;
 	CString m_pw;
-	m_editAccount.GetWindowTextW(m_acct);
-	m_editPassword.GetWindowTextW(m_pw);
-	CClientDlg *pParent = (CClientDlg*)GetParent();
-	pParent->m_account=m_acct;
-	pParent->m_password = m_pw;
+	m_editAccount.GetWindowTextW(m_acct);			//获取用户名
+	m_editPassword.GetWindowTextW(m_pw);			//获取密码
+	CClientDlg *pParent = (CClientDlg*)GetParent();	//获取主窗口句柄
+	pParent->m_account=m_acct;						//将用户名和密码传入主窗口
+	pParent->m_password = m_pw;						
+	//发送自定义消息，主窗口执行实现登录
 	::SendMessage(::AfxGetMainWnd()->m_hWnd, WM_LOGIN, 0, 0);
 }
 
 
 void CLoginDlg::OnBnClickedButtonRegistor()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	RegistorDlg = new CRegisterDlg;
 	RegistorDlg->DoModal();
 }
@@ -93,12 +90,23 @@ void CLoginDlg::OnBnClickedButtonRegistor()
 
 void CLoginDlg::OnOK()
 {
-	// TODO: 在此添加专用代码和/或调用基类
-	AfxMessageBox(L"登陆成功！");
+	MessageBox(L"登陆成功！",L"提示",MB_ICONINFORMATION);
 	CDialogEx::OnOK();
 }
 
 void CLoginDlg::CloseRegistorDlg()
 {
 	RegistorDlg->OnOK();
+}
+
+
+BOOL CLoginDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// 修改Enter定义
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		OnBnClickedButtonLogin();
+		return TRUE;
+	}
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

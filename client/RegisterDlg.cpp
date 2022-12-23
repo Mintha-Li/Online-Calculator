@@ -45,7 +45,6 @@ BOOL CRegisterDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
 	staticTitleFont.CreatePointFont(150, _T("楷体"));
 	m_staticTitle.SetFont(&staticTitleFont);
 
@@ -65,12 +64,14 @@ void CRegisterDlg::OnBnClickedButtonRst()
 	m_editPwCheck.GetWindowTextW(m_pwcheck);
 	CClientDlg *pParent = (CClientDlg*)(AfxGetMainWnd());
 	if (m_pw == m_pwcheck) {
+		//若两次密码一致，则发送给主窗口执行注册操作
 		pParent->m_account = m_acct;
 		pParent->m_password = m_pw;
 		::SendMessage(::AfxGetMainWnd()->m_hWnd, WM_REGISTER, 0, 0);
 	}
 	else
 	{
+		//若两次密码不一致，则进行提示
 		MessageBox(L"两次输入的密码不一致！", L"提示", MB_OK | MB_ICONERROR);
 	}
 }
@@ -78,7 +79,19 @@ void CRegisterDlg::OnBnClickedButtonRst()
 
 void CRegisterDlg::OnOK()
 {
-	// TODO: 在此添加专用代码和/或调用基类
 	MessageBox(L"注册成功！", L"提示", MB_ICONINFORMATION);
 	CDialogEx::OnOK();
+}
+
+
+BOOL CRegisterDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// 修改Enter定义
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		OnBnClickedButtonRst();
+		return TRUE;
+	}
+
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

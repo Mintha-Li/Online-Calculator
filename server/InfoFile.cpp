@@ -167,6 +167,7 @@ User CInfoFile::GetUser(CString username)
 			return *user;
 		}
 	}
+	return *userlist.begin();
 }
 
 DOUBLE CInfoFile::GetUserValue(CString username)

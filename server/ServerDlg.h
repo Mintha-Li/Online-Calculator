@@ -49,21 +49,22 @@ public:
 	BOOL ServerOn();
 	BOOL ServerOff();
 	void SaveLog();
-
+	BOOL ServerStatus = FALSE;
 public:
 	//界面部分
 	CTabCtrl m_TabMain;
 	int m_CurSelTab;
 	CSetUpDlg *m_SetUpDlg;
-	CUserManagerDlg *m_UserMGMTDlg;
+	CUserManagerDlg *m_UserManagerDlg;
 	CServerLogDlg *m_ServerLogDlg;
-	CDialogEx *pDialog[3];	// 用于保存对话框对象指针
+	CDialogEx *pDialog[3];						// 用于保存对话框对象指针
 	void InitTabMain();
 	afx_msg void OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnClose();
-
 public:
 	//用户信息部分
 	CInfoFile *m_UserData;
 	void InitUserData();
+public:
+	DOUBLE m_valCost;
 };

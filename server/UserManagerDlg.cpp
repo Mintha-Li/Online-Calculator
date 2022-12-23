@@ -31,6 +31,7 @@ void CUserManagerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_ACCOUNT, m_editAccount);
 	DDX_Control(pDX, IDC_EDIT_PASSWORD, m_editPassword);
 	DDX_Control(pDX, IDC_EDIT_VALUE, m_editValue);
+	DDX_Control(pDX, IDC_EDIT_USERNAME, m_editUsername);
 }
 
 
@@ -39,6 +40,7 @@ BEGIN_MESSAGE_MAP(CUserManagerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_DEL_USER, &CUserManagerDlg::OnBnClickedButtonDelUser)
 	ON_BN_CLICKED(IDC_BUTTON_ADDUSER, &CUserManagerDlg::OnBnClickedButtonAdduser)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CUserManagerDlg::OnBnClickedButtonSave)
+	ON_BN_CLICKED(IDC_BUTTON_FIND, &CUserManagerDlg::OnBnClickedButtonFind)
 END_MESSAGE_MAP()
 
 
@@ -59,12 +61,6 @@ BOOL CUserManagerDlg::OnInitDialog()
 	for (int i = 0; i < 3; i++) {
 		m_UserDataList.InsertColumn(i, col[i], LVCFMT_LEFT,r.right / 3);	//插入表头
 	}
-	
-	//背景与文字主题设置(测试用)
-	//dataList.SetBkColor(RGB(100, 120, 200));
-	//dataList.SetTextColor(RGB(200, 120, 300));
-	//dataList.SetTextBkColor(RGB(200, 200, 300));
-
 	UpdateListData();		//从链表中更新列表数据
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -141,4 +137,26 @@ void CUserManagerDlg::OnBnClickedButtonSave()
 	// TODO: 在此添加控件通知处理程序代码
 	m_pUserData->WriteUserData();
 	MessageBox(L"用户信息已保存", L"提示",MB_ICONINFORMATION);
+}
+
+
+void CUserManagerDlg::OnBnClickedButtonFind()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CString strUsername;
+	m_editUsername.GetWindowTextW(strUsername);
+	//去除所有行的选中状态
+	for (int row = 0; row < m_UserDataList.GetItemCount(); row++)
+	{
+		m_UserDataList.SetItemState(row, 0, LVIS_SELECTED);
+	}
+	//查找相应的用户名
+	for (int row = 0; row < m_UserDataList.GetItemCount(); row++)
+	{
+		if (m_UserDataList.GetItemText(row,1)==strUsername)
+		{
+			m_UserDataList.SetFocus();
+			m_UserDataList.SetItemState(row, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+		}
+	}
 }

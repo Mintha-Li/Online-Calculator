@@ -14,6 +14,7 @@
 #define IDD_LOGIN                       138
 #define IDD_REGISTER                    140
 #define IDI_ICON1                       144
+#define IDD_USERDATA                    145
 #define IDC_DISPLAY                     1000
 #define IDC_BUTTON1                     1001
 #define IDC_BUTTON2                     1002
@@ -55,6 +56,7 @@
 #define IDC_EDIT_ACCT                   1038
 #define IDC_BUTTON_RST                  1039
 #define IDC_BUTTON_CHARGE_OK            1040
+#define IDC_BUTTON_APPLY                1041
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -68,14 +70,17 @@
 #define ID_32781                        32781
 #define ID_CHARGE                       32782
 #define ID_32784                        32784
+#define ID_ARRANGE                      32785
+#define ID_USERDATA                     32786
+#define ID_LOGOUT                       32787
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        145
-#define _APS_NEXT_COMMAND_VALUE         32785
-#define _APS_NEXT_CONTROL_VALUE         1041
+#define _APS_NEXT_RESOURCE_VALUE        147
+#define _APS_NEXT_COMMAND_VALUE         32788
+#define _APS_NEXT_CONTROL_VALUE         1042
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

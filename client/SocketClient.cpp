@@ -88,6 +88,10 @@ void CSocketClient::MsgProc(CString strMsg)
 		if (m_Status == STATUS_TRUE) {
 			pMainDlg->OnCalculateSuccess(m_Text);
 		}
+		else
+		{
+			pMainDlg->OnCalculateFail();
+		}
 		break;
 	}
 	case REQUEST_CHARGE: {
@@ -98,6 +102,9 @@ void CSocketClient::MsgProc(CString strMsg)
 			//pMainDlg->OnChargeFail();
 		}
 		break;
+	}
+	case REQUEST_VALUE: {
+		pMainDlg->OnUserValueChange(_ttof(m_Text));
 	}
 	default:
 		break;

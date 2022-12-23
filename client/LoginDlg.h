@@ -4,7 +4,6 @@
 // CLogin 对话框
 class CRegisterDlg;
 class CClientDlg;
-class CRegisterDlg;
 class CLoginDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CLoginDlg)
@@ -37,4 +36,5 @@ public:
 	virtual void OnOK();
 	CRegisterDlg *RegistorDlg;
 	void CloseRegistorDlg();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
